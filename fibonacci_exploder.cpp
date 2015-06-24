@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -8,6 +9,9 @@ int main() {
     int i;
     long ff[46];
     long x;
+    float koeff1 = 2.078086921;
+    float koeff2 = 1.672275938;
+    int nf;
     string line;
     ifstream in_stream;
 
@@ -23,13 +27,8 @@ int main() {
             x = stol(line);
             //cout << x << '\n';
             while (x > 1) {
-                for (i = 2; i < 46; i++) {
-                    if (ff[i] >= x) {
-                        x -= ff[i - 1];
-                        //cout << ff[i - 1] << '\n';
-                        break;
-                    }
-                }
+                nf = int(koeff2 + koeff1*log(x*1.f));
+                x -= ff[nf];
             }
             //cout << "---------\n";
         }

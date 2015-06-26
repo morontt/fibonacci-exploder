@@ -9,6 +9,7 @@ int main() {
     int i;
     long ff[46];
     long x;
+    long m = 4200;
     float koeff1 = 2.078086921;
     float koeff2 = 1.672275938;
     int nf;
@@ -27,8 +28,17 @@ int main() {
             x = stol(line);
             //cout << x << '\n';
             while (x > 1) {
-                nf = int(koeff2 + koeff1*log(x*1.f));
-                x -= ff[nf];
+                if (x > m) {
+                    nf = int(koeff2 + koeff1*log(x*1.f));
+                    x -= ff[nf];
+                } else {
+                    for (i = 2; i < 46; i++) {
+                        if (ff[i] >= x) {
+                            x -= ff[i - 1];
+                            break;
+                        }
+                    }
+                }
             }
             //cout << "---------\n";
         }

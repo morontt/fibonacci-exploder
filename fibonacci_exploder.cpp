@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cmath>
-#include <ctime>
+#include <sys/time.h>
 #include <thread>
 
 #define DATA_SIZE 10000000
@@ -41,6 +41,13 @@ void compute(int delta) {
     }
 }
 
+double get_ms() {
+    struct timeval tim;
+
+    gettimeofday(&tim, NULL);
+    return (double)tim.tv_sec + ((double)tim.tv_usec / 1000000.0);
+}
+
 int main() {
     double start, end;
     long idx;
@@ -49,7 +56,7 @@ int main() {
     ifstream in_stream;
     thread threads[NUM_THREADS];
 
-    start = clock();
+    start = get_ms();
 
     ff[0] = 0;
     ff[1] = 1;
@@ -67,18 +74,18 @@ int main() {
         in_stream.close();
     }
 
-    end = clock();
-    cout << "file reading: " << (end - start) / CLOCKS_PER_SEC << endl;
+    end = get_ms();
+    cout << "file reading:\t" << (end - start) << endl;
 
-    start = clock();
+    start = get_ms();
     for (i = 0; i < NUM_THREADS; i++) {
         threads[i] = thread(compute, i);
     }
     for (i = 0; i < NUM_THREADS; i++) {
         threads[i].join();
     }
-    end = clock();
+    end = get_ms();
 
-    cout << "compute: " << (end - start) / CLOCKS_PER_SEC << endl;
+    cout << "compute:\t" << (end - start) << endl;
     return 0;
 }

@@ -2,19 +2,51 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include <ctime>
+
+#define DATA_SIZE 10000000
 
 using namespace std;
 
-int main() {
+long ff[46];
+long data_arr[DATA_SIZE];
+
+void compute() {
     int i;
-    long ff[46];
-    long x;
+    long x, idx;
     long m = 4200;
     float koeff1 = 2.078086921;
     float koeff2 = 1.672275938;
     int nf;
+
+    for (idx = 0; idx < DATA_SIZE; idx++) {
+        x = data_arr[idx];
+        //cout << x << '\n';
+        while (x > 1) {
+            if (x > m) {
+                nf = int(koeff2 + koeff1*log(x*1.f));
+                x -= ff[nf];
+            } else {
+                for (i = 2; i < 46; i++) {
+                    if (ff[i] >= x) {
+                        x -= ff[i - 1];
+                        break;
+                    }
+                }
+            }
+        }
+        //cout << "---------\n";
+    }
+}
+
+int main() {
+    double start, end;
+    long idx;
+    int i;
     string line;
     ifstream in_stream;
+
+    start = clock();
 
     ff[0] = 0;
     ff[1] = 1;
@@ -23,27 +55,22 @@ int main() {
     }
 
     in_stream.open("input.dat");
+    idx = 0;
     if (in_stream.is_open()) {
         while (getline(in_stream, line)) {
-            x = stol(line);
-            //cout << x << '\n';
-            while (x > 1) {
-                if (x > m) {
-                    nf = int(koeff2 + koeff1*log(x*1.f));
-                    x -= ff[nf];
-                } else {
-                    for (i = 2; i < 46; i++) {
-                        if (ff[i] >= x) {
-                            x -= ff[i - 1];
-                            break;
-                        }
-                    }
-                }
-            }
-            //cout << "---------\n";
+            data_arr[idx] = stol(line);
+            idx++;
         }
         in_stream.close();
     }
 
+    end = clock();
+    cout << "file reading: " << (end - start) / CLOCKS_PER_SEC << endl;
+
+    start = clock();
+    compute();
+    end = clock();
+
+    cout << "compute: " << (end - start) / CLOCKS_PER_SEC << endl;
     return 0;
 }

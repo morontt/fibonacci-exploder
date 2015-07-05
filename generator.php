@@ -4,7 +4,7 @@
 set_time_limit(0);
 
 $f = fopen(__DIR__ . '/input.dat', 'w');
-for ($i = 0; $i < 1000000; $i++) {
+for ($i = 0; $i < 10000000; $i++) {
     $str = sprintf(
         "%s%s%s\n",
         mt_rand(1, 9),

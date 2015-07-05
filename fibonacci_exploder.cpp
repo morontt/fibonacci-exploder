@@ -3,15 +3,17 @@
 #include <string>
 #include <cmath>
 #include <ctime>
+#include <thread>
 
 #define DATA_SIZE 10000000
+#define NUM_THREADS 4
 
 using namespace std;
 
 long ff[46];
 long data_arr[DATA_SIZE];
 
-void compute() {
+void compute(int delta) {
     int i;
     long x, idx;
     long m = 4200;
@@ -19,7 +21,7 @@ void compute() {
     float koeff2 = 1.672275938;
     int nf;
 
-    for (idx = 0; idx < DATA_SIZE; idx++) {
+    for (idx = delta; idx < DATA_SIZE; idx += NUM_THREADS) {
         x = data_arr[idx];
         //cout << x << '\n';
         while (x > 1) {
@@ -45,6 +47,7 @@ int main() {
     int i;
     string line;
     ifstream in_stream;
+    thread threads[NUM_THREADS];
 
     start = clock();
 
@@ -68,7 +71,12 @@ int main() {
     cout << "file reading: " << (end - start) / CLOCKS_PER_SEC << endl;
 
     start = clock();
-    compute();
+    for (i = 0; i < NUM_THREADS; i++) {
+        threads[i] = thread(compute, i);
+    }
+    for (i = 0; i < NUM_THREADS; i++) {
+        threads[i].join();
+    }
     end = clock();
 
     cout << "compute: " << (end - start) / CLOCKS_PER_SEC << endl;
